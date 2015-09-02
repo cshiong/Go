@@ -16,10 +16,12 @@ import (
 
 type HashKey uint64
 
+//virturalNode using the hasKey as its identity and Node is the physical node this virtual node belong to
 type VirtualNode struct{
 	HashKey
 	Node string
 }
+
 
 func (v VirtualNode) compare (c VirtualNode) int{
 	return int(v.HashKey - c.HashKey)
@@ -28,7 +30,7 @@ func (v VirtualNode) compare (c VirtualNode) int{
 //sorted slice based on the HashKey
 type VirtualNodes []VirtualNode
 
-// Len is part of sort.Interface.not using pointer since slice use reference
+// Len is part of sort.Interface.  not using pointer since slice use reference
 func (s VirtualNodes) Len() int {
 	return len(s)
 }
@@ -38,7 +40,7 @@ func (s VirtualNodes) Swap(i, j int) {
 	s[i], s[j] = s[j], s[i]
 }
 
-// Less is part of sort.Interface.
+// Less is part of sort.Interface. i, j is the index of the virtual node in the collection
 func (s VirtualNodes) Less(i, j int) bool {
 	return s[i].HashKey <s[j].HashKey
 }
@@ -49,7 +51,7 @@ func (s VirtualNodes) Less(i, j int) bool {
 type HashRing struct {
 	sync.RWMutex
 	VirtualNodes  //virtual node key mapping to physical nodes,
-    Nodes map[string][]VirtualNode //  the physical node have all the virtualNode index
+    Nodes map[string][]VirtualNode //  the physical node have all the virtualNode index, for quick operations based on the physical node
     Capacity int
 	Replicates int
 
